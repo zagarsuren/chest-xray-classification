@@ -1,0 +1,3 @@
+[submodule "DenseNet121-Chest-X-Ray"]
+	path = DenseNet121-Chest-X-Ray
+	url = https://github.com/Diegoalejandroingelec/DenseNet121-Chest-X-Ray.git
