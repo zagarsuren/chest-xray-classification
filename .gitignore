@@ -1,0 +1,32 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Environment files
+.env
+.venv
+env/
+venv/
+xray/
+
+# TensorBoard logs 
+runs/
+
+# Data folder
+data/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+xray/lib/
+xray/bin/
+xray/share/
+
+
+models/
+runs/
+logs/
