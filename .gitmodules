@@ -5,3 +5,4 @@
 [submodule "EfficientNet_X-Ray"]
 	path = EfficientNet_X-Ray
 	url = https://github.com/ShudarshanKongkham/EfficientNet_X-Ray.git
+	branch = master
