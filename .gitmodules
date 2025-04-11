@@ -1,6 +1,7 @@
 [submodule "DenseNet121-Chest-X-Ray"]
 	path = DenseNet121-Chest-X-Ray
 	url = https://github.com/Diegoalejandroingelec/DenseNet121-Chest-X-Ray.git
+	branch = master
 [submodule "EfficientNet_X-Ray"]
 	path = EfficientNet_X-Ray
 	url = https://github.com/ShudarshanKongkham/EfficientNet_X-Ray.git
