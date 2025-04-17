@@ -6,3 +6,7 @@
 	path = EfficientNet_X-Ray
 	url = https://github.com/ShudarshanKongkham/EfficientNet_X-Ray.git
 	branch = master
+[submodule "xray-swin"]
+    path = xray-swin
+    url = https://github.com/zagarsuren/xray-swin.git
+	branch = master
