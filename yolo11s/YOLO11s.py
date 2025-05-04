@@ -14,7 +14,7 @@ import torch # PyTorch is a dependency of ultralytics
 # -----------------------------
 # *** IMPORTANT: Set the correct path to your trained YOLO model weights file (.pt) ***
 # This should be the 'best.pt' file from your training run's 'weights' directory.
-MODEL_PATH = './weights/best.pt' # <<<--- UPDATE IF NEEDED
+MODEL_PATH = 'yolo11s/yolov11s.pt' 
 
 # Define expected class names (Optional but good for verification)
 # The script will primarily rely on model.names after loading.
@@ -199,7 +199,7 @@ if __name__ == "__main__":
 
     # --- Configuration for Example ---
     # *** IMPORTANT: Update this path to a valid test image in your environment ***
-    EXAMPLE_IMAGE_PATH = '/home/sagemaker-user/AUT2025/X_ray/DATA/1500_train/test/Cardiomegaly/00003610_012.png' # <<<--- VERIFY THIS PATH
+    EXAMPLE_IMAGE_PATH = '/home/diego/Documents/master/S4/Fuzzy_Logic/DenseNet121-Chest-X-Ray/balanced_dataset_4/test/Cardiomegaly/00000032_053.png' # <<<--- VERIFY THIS PATH
 
     print(f"\n--- Script Configuration ---")
     print(f"Using YOLO Model: {MODEL_PATH}")

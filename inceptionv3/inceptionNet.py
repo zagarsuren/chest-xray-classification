@@ -21,8 +21,8 @@ print(f"GPU Available: {tf.config.list_physical_devices('GPU')}")
 
 # --- Basic Settings ---
 DATA_ROOT = '/home/sagemaker-user/AUT2025/X_ray/DATA/1500_train' # Example path - ADJUST IF NEEDED
-NUM_CLASSES = 5
 CLASSES = sorted(['Atelectasis', 'Cardiomegaly', 'Nodule', 'Pneumothorax', 'No Finding']) # Make sure these match your folders
+NUM_CLASSES = len(CLASSES)
 
 # --- Model & Image Settings ---
 MODEL_VARIANT = 'InceptionV3'
@@ -104,7 +104,7 @@ def build_keras_inceptionv3(input_shape, num_classes, dropout_rate=0.2, model_na
 # Load Final Best Weights and Evaluate
 # -----------------------------
 print(f"\n--- Loading Final Best Weights and Evaluating ---")
-best_checkpoint_path = "../keras_inceptionNet_5class/checkpoints_keras_simple/InceptionV3_full_finetune_20250427-122319/InceptionV3_best_weights.weights.h5"
+best_checkpoint_path = "inceptionv3/Inceptionv3.weights.h5"
 
 def load_bestmodel(best_checkpoint_path):
     print(f"Loading best weights from: {best_checkpoint_path}")
@@ -143,7 +143,7 @@ def predictor(img):
 # Example usage
 if __name__ == "__main__":
     # Example: Load an image and make a prediction
-    sample_img_path = "../DATA/1500_train/test/Cardiomegaly/00004533_011.png"  # Replace with actual path
+    sample_img_path = "/home/diego/Documents/master/S4/Fuzzy_Logic/DenseNet121-Chest-X-Ray/balanced_dataset_4/test/Cardiomegaly/00000032_053.png"  # Replace with actual path
     if os.path.exists(sample_img_path):
         img = cv2.imread(sample_img_path)
         result = predictor(img)

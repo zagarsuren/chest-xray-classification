@@ -14,7 +14,7 @@ import numpy as np
 from typing import Dict, List, Union
 
 # Configuration: adjust model path
-CHECKPOINT_PATH = "./swin/best_model/swinb_best.pth"
+CHECKPOINT_PATH = "./swin/swin.pth"
 CLASS_NAMES: List[str] = [
     "Atelectasis",
     "Cardiomegaly",
@@ -83,7 +83,7 @@ def predictor(img: Union[np.ndarray, Image.Image]) -> Dict[str, float]:
 if __name__ == "__main__":
     import cv2
 
-    sample_img_path = "./xray-swin/data_five_final/test/Effusion/00001376_007.png" 
+    sample_img_path = "/home/diego/Documents/master/S4/Fuzzy_Logic/DenseNet121-Chest-X-Ray/balanced_dataset_4/test/Cardiomegaly/00000032_053.png" 
     if os.path.exists(sample_img_path):
         img_bgr = cv2.imread(sample_img_path)
         if img_bgr is None:

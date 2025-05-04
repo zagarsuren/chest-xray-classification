@@ -32,3 +32,11 @@ runs/
 logs/
 *.h5
 *.pt
+*.weights.h5
+*.pth
+*.pt
+*.h5
+*.weights.h5
+*.pth
+*.pt
+*.h5

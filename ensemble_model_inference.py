@@ -2,12 +2,12 @@ import cv2 # Or your preferred image loading library
 import numpy as np # Useful for calculations
  
 # --- Assume these predictor functions are imported correctly ---
-# from efficientnet import predictor as predictor_efficientnet
+from efficientnetb0.efficientNet import predictor as predictor_efficientnet
 # from resnet50 import predictor as predictor_resnet50 # Assuming corrected import
 from densenet121.densenet import predictor as predictor_densenet
-# from swin import predictor as predictor_swin
-# from yolo import predictor as predictor_yolo
-# from inception import predictor as predictor_inception
+from swin.swin import predictor as predictor_swin
+from yolo11s.YOLO11s import predictor as predictor_yolo
+from inceptionv3.inceptionNet import predictor as predictor_inception
  
 
 # --- End Placeholder Predictors ---
@@ -44,12 +44,12 @@ classes = ['Atelectasis', 'Cardiomegaly', 'Effusion', 'Nodule', 'Pneumothorax']
 # --- Map model names to their predictor functions ---
 # Make sure the keys here match the keys in the weights dictionary
 model_predictors = {
-    # 'EfficientNet': predictor_efficientnet,
+    'EfficientNet': predictor_efficientnet,
     # 'ResNet50': predictor_resnet50, # Corrected name based on table
     'DenseNet': predictor_densenet,
-    # 'Swin Transformer': predictor_swin,
-    # 'YOLOv11s': predictor_yolo,
-    # 'InceptionV3': predictor_inception
+    'Swin Transformer': predictor_swin,
+    'YOLOv11s': predictor_yolo,
+    'InceptionV3': predictor_inception
 }
  
 def weighted_ensemble_predict(image_path, threshold=0.5):
