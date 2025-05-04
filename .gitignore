@@ -31,3 +31,4 @@ models/
 runs/
 logs/
 *.h5
+*.pt
