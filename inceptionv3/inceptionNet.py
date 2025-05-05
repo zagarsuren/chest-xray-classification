@@ -21,7 +21,7 @@ print(f"GPU Available: {tf.config.list_physical_devices('GPU')}")
 
 # --- Basic Settings ---
 DATA_ROOT = '/home/sagemaker-user/AUT2025/X_ray/DATA/1500_train' # Example path - ADJUST IF NEEDED
-CLASSES = sorted(['Atelectasis', 'Cardiomegaly', 'Nodule', 'Pneumothorax', 'No Finding']) # Make sure these match your folders
+CLASSES = ['Atelectasis', 'Cardiomegaly', 'Effusion', 'Nodule', 'Pneumothorax'] # Make sure these match your folders
 NUM_CLASSES = len(CLASSES)
 
 # --- Model & Image Settings ---
@@ -106,7 +106,7 @@ def build_keras_inceptionv3(input_shape, num_classes, dropout_rate=0.2, model_na
 print(f"\n--- Loading Final Best Weights and Evaluating ---")
 best_checkpoint_path = "inceptionv3/Inceptionv3.weights.h5"
 
-def load_bestmodel(best_checkpoint_path):
+def load_bestmodel(best_checkpoint_path="inceptionv3/Inceptionv3.weights.h5"):
     print(f"Loading best weights from: {best_checkpoint_path}")
     try:
         model_final = build_keras_inceptionv3(INPUT_SHAPE, NUM_CLASSES, DROPOUT_RATE, model_name="Final_Eval_Model")
@@ -120,20 +120,22 @@ def load_bestmodel(best_checkpoint_path):
 
 
 
-def predictor(img):
+def predictor(img, model=None):
     """
     Predict chest X-ray conditions from an OpenCV image.
     
     Args:
         img: Numpy array containing the image (BGR format from OpenCV)
+        model: Pre-loaded model (optional). If None, loads model
         
     Returns:
         Dictionary mapping class names to confidence scores
     """
-    model = load_bestmodel(best_checkpoint_path)
+    if model is None:
+        model = load_bestmodel(best_checkpoint_path)
     img_batch = preprocess_image(img)
     # Get predictions
-    predictions = model.predict(img_batch)[0]
+    predictions = model.predict(img_batch, verbose=0)[0]
     
     # Create dictionary of class probabilities
     result = {class_name: float(prob) for class_name, prob in zip(CLASSES, predictions)}

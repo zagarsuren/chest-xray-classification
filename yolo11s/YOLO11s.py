@@ -99,13 +99,15 @@ def load_yolo_model_once():
 # -----------------------------
 # Predictor Function Definition
 # -----------------------------
-def predictor(image_cv2):
+def predictor(image_cv2, model=None, model_class_names=None):
     """
     Performs classification prediction on a single input image using the loaded YOLO model.
 
     Args:
         image_cv2: NumPy array representing the image (loaded using cv2).
                    Expected format is Height x Width x Channels (BGR).
+        model: Pre-loaded YOLO model (optional)
+        model_class_names: Class names from the pre-loaded model (optional)
 
     Returns:
         dict: A dictionary mapping class names (str) to their predicted
@@ -123,10 +125,14 @@ def predictor(image_cv2):
     print(f"Input image shape: {image_cv2.shape}")
 
     # --- Ensure Model is Loaded ---
-    model_loaded, model_class_names_loaded = load_yolo_model_once()
-    if model_loaded is None or model_class_names_loaded is None:
-         print("Prediction Error: YOLO model could not be loaded. Cannot proceed.")
-         return None
+    if model is None or model_class_names is None:
+        model_loaded, model_class_names_loaded = load_yolo_model_once()
+        if model_loaded is None or model_class_names_loaded is None:
+            print("Prediction Error: YOLO model could not be loaded. Cannot proceed.")
+            return None
+    else:
+        model_loaded = model
+        model_class_names_loaded = model_class_names
 
     # --- Preprocessing (YOLO handles resizing, normalization internally, but requires RGB) ---
     print("Converting image BGR -> RGB for YOLO model...")

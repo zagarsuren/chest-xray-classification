@@ -1,7 +1,27 @@
 import os
+# Set environment variables to reduce TensorFlow verbosity - more aggressive settings
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Suppress TF logging
+# Suppress ABSL logging (for the WARNING messages about absl::InitializeLog)
+os.environ['ABSL_LOGGING_LEVEL'] = '50'  # Maximum level to silence almost everything
+
+# Import absl and silence it before other imports
+import logging
+from absl import logging as absl_logging
+absl_logging.set_verbosity(absl_logging.ERROR)
+logging.root.setLevel(logging.ERROR)
+
 import numpy as np
 import cv2
 import tensorflow as tf
+# Most aggressive TF logging suppression
+tf.get_logger().setLevel('ERROR')
+tf.autograph.set_verbosity(3)
+import warnings
+warnings.filterwarnings('ignore')  # Suppress UserWarnings
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
+# Disable multiple registrations warning
+tf.debugging.set_log_device_placement(False)
 from tensorflow.keras.applications import DenseNet121
 from tensorflow.keras import layers, models, optimizers
 import json
@@ -142,21 +162,30 @@ def load_model():
 # Global model variable to avoid reloading
 _model = None
 
-def predictor(img):
+def predictor(img, model=None):
     """
     Predict chest X-ray conditions from an OpenCV image.
     
     Args:
         img: Numpy array containing the image (BGR format from OpenCV)
+        model: Pre-loaded model (optional). If None, loads or uses existing one
         
     Returns:
         Dictionary mapping class names to confidence scores
     """
     global _model
     
-    # Load model if not already loaded
-    if _model is None:
+    # Use provided model or load if needed
+    if model is not None:
+        # Use provided model
+        use_model = model
+    elif _model is None:
+        # Load model if not already loaded
         _model = load_model()
+        use_model = _model
+    else:
+        # Use already loaded model
+        use_model = _model
     
     # Preprocess the image
     # Convert BGR to RGB (OpenCV loads as BGR)
@@ -172,7 +201,7 @@ def predictor(img):
     img_batch = np.expand_dims(img_normalized, axis=0)
     
     # Get predictions
-    predictions = _model.predict(img_batch)[0]
+    predictions = use_model.predict(img_batch, verbose=False)[0]
     
     # Create dictionary of class probabilities
     result = {class_name: float(prob) for class_name, prob in zip(CLASSES, predictions)}
@@ -185,7 +214,5 @@ if __name__ == "__main__":
     sample_img_path = "/home/diego/Documents/master/S4/Fuzzy_Logic/DenseNet121-Chest-X-Ray/balanced_dataset_4/test/Cardiomegaly/00000032_053.png"  # Replace with actual path
     if os.path.exists(sample_img_path):
         img = cv2.imread(sample_img_path)
-        result = predictor(img)
-        print("Prediction results:")
-        for condition, probability in result.items():
-            print(f"{condition}: {probability:.4f}") 
+        result = predictor(img) 
+        print(result)

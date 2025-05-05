@@ -33,7 +33,7 @@ def build_keras_efficientnet(input_shape, num_classes, dropout_rate=0.2, model_n
     ], name=f"{model_name}_keras" if model_name else f"{MODEL_VARIANT}_keras")
     return model
 
-def load_bestmodel(best_checkpoint_path):
+def load_bestmodel(best_checkpoint_path=best_checkpoint_path):
     try:
         model_final = build_keras_efficientnet(INPUT_SHAPE, NUM_CLASSES, DROPOUT_RATE, model_name="Final_Eval_Model")
         model_final.load_weights(best_checkpoint_path)
@@ -41,10 +41,11 @@ def load_bestmodel(best_checkpoint_path):
         print(f"Warning: Could not load weights from {best_checkpoint_path}. Error: {e}")
     return model_final
 
-def predictor(img):
-    model = load_bestmodel(best_checkpoint_path)
+def predictor(img, model=None):
+    if model is None:
+        model = load_bestmodel(best_checkpoint_path)
     img_batch = preprocess_image(img)
-    predictions = model.predict(img_batch)[0]
+    predictions = model.predict(img_batch, verbose=0)[0]
     result = {class_name: float(prob) for class_name, prob in zip(CLASSES, predictions)}
     return result
 
