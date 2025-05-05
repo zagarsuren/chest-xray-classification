@@ -83,17 +83,18 @@ class EnsembleModelClassifier:
         except Exception as e:
             print(f"Error during model initialization: {e}")
     
-    def predict(self, image_path):
+    def predict(self, image_path, method="weighted_voting"):
         """
-        Performs weighted voting ensemble prediction based on class-specific weights.
+        Performs prediction based on the specified method.
     
         Args:
             image_path (str): Path to the input image.
+            method (str): The voting method to use - either "weighted_voting" or "voting".
     
         Returns:
             tuple: A tuple containing:
-                - dict: Dictionary of final weighted scores for each class.
-                - str: Predicted class with the highest probability.
+                - dict: Dictionary of final scores for each class (weighted or vote counts).
+                - str: Predicted class with the highest probability or vote count.
         """
         try:
             # Load the image (adjust loading method if necessary)
@@ -147,30 +148,46 @@ class EnsembleModelClassifier:
         
         print("Finished individual predictions.")
     
-        # --- Calculate weighted scores ---
-        final_weighted_scores = {cls: 0.0 for cls in self.classes}
-    
-        for cls in self.classes:
-            total_weight_used_for_class = 0.0 # Keep track of weights used in case a model failed
+        if method == "weighted_voting":
+            # --- Calculate weighted scores ---
+            final_scores = {cls: 0.0 for cls in self.classes}
+        
+            for cls in self.classes:
+                total_weight_used_for_class = 0.0 # Keep track of weights used in case a model failed
+                for model_name, individual_prediction in model_predictions.items():
+                    # Check if this model successfully predicted and returned the expected class
+                    if model_name in self.weights[cls] and cls in individual_prediction:
+                        prob = individual_prediction[cls] # Probability from this model for this class
+                        weight = self.weights[cls][model_name] # Specific weight for this model and class
+            
+                        final_scores[cls] += prob * weight
+                        total_weight_used_for_class += weight
+                    # else: Optional: print warning if model prediction is missing
+            
+                # Optional: Renormalize if some models failed and weights don't sum to ~1
+                if total_weight_used_for_class > 0 and not np.isclose(total_weight_used_for_class, 1.0):
+                    print(f"Warning: Total weight used for class '{cls}' is {total_weight_used_for_class:.3f}. Renormalizing score.")
+                    final_scores[cls] /= total_weight_used_for_class
+        
+        elif method == "voting":
+            # --- Calculate normal voting scores (majority voting) ---
+            final_scores = {cls: 0 for cls in self.classes}
+            
+            # For each model, find the class with highest probability and count it as a vote
             for model_name, individual_prediction in model_predictions.items():
-                # Check if this model successfully predicted and returned the expected class
-                if model_name in self.weights[cls] and cls in individual_prediction:
-                    prob = individual_prediction[cls] # Probability from this model for this class
-                    weight = self.weights[cls][model_name] # Specific weight for this model and class
+                if individual_prediction:  # Make sure the model prediction is available
+                    # Find class with highest probability for this model
+                    predicted_class = max(individual_prediction, key=individual_prediction.get)
+                    # Add a vote for this class
+                    final_scores[predicted_class] += 1
+        
+        else:
+            raise ValueError(f"Unknown method: {method}. Use 'weighted_voting' or 'voting'.")
     
-                    final_weighted_scores[cls] += prob * weight
-                    total_weight_used_for_class += weight
-                # else: Optional: print warning if model prediction is missing
+        # --- Use max to find the class with the highest score/vote ---
+        predicted_class = max(final_scores, key=final_scores.get)
     
-            # Optional: Renormalize if some models failed and weights don't sum to ~1
-            if total_weight_used_for_class > 0 and not np.isclose(total_weight_used_for_class, 1.0):
-                print(f"Warning: Total weight used for class '{cls}' is {total_weight_used_for_class:.3f}. Renormalizing score.")
-                final_weighted_scores[cls] /= total_weight_used_for_class
-    
-        # --- Use argmax to find the class with the highest probability ---
-        predicted_class = max(final_weighted_scores, key=final_weighted_scores.get)
-    
-        return final_weighted_scores, predicted_class
+        return final_scores, predicted_class
 
 
 # --- Example Usage ---
@@ -178,15 +195,31 @@ if __name__ == "__main__":
     # Create the ensemble classifier
     ensemble = EnsembleModelClassifier()
     
-    # Use the ensemble to predict
+    # Test image path
     image_file = '/home/diego/Documents/master/S4/Fuzzy_Logic/DenseNet121-Chest-X-Ray/balanced_dataset_4/test/Cardiomegaly/00000032_053.png' 
-    weighted_scores, predicted_class = ensemble.predict(image_file)
+    
+    # Demonstrate weighted voting method
+    print("\n=== Testing Weighted Voting Method ===")
+    weighted_scores, weighted_prediction = ensemble.predict(image_file, method="weighted_voting")
  
-    if weighted_scores and predicted_class:
-        print("\n--- Ensemble Results ---")
+    if weighted_scores and weighted_prediction:
+        print("\n--- Weighted Voting Results ---")
         print("Final Weighted Scores:")
         for cls, score in weighted_scores.items():
             print(f"  {cls}: {score:.4f}")
  
-        print("\nPredicted Class (using argmax):")
-        print(f"  {predicted_class} (score: {weighted_scores[predicted_class]:.4f})")
+        print("\nPredicted Class (weighted voting):")
+        print(f"  {weighted_prediction} (score: {weighted_scores[weighted_prediction]:.4f})")
+    
+    # Demonstrate normal voting method
+    print("\n=== Testing Normal Voting Method ===")
+    vote_counts, voting_prediction = ensemble.predict(image_file, method="voting")
+    
+    if vote_counts and voting_prediction:
+        print("\n--- Normal Voting Results ---")
+        print("Vote Counts:")
+        for cls, count in vote_counts.items():
+            print(f"  {cls}: {count}")
+        
+        print("\nPredicted Class (majority voting):")
+        print(f"  {voting_prediction} (votes: {vote_counts[voting_prediction]})")
