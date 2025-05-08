@@ -1,0 +1,6 @@
+,Atelectasis,Cardiomegaly,Effusion,Nodule,Pneumothorax
+Atelectasis,75,9,10,10,6
+Cardiomegaly,11,91,2,6,0
+Effusion,8,9,82,8,3
+Nodule,9,8,4,71,18
+Pneumothorax,7,3,4,6,90

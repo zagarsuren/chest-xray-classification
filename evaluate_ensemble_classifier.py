@@ -124,7 +124,7 @@ def evaluate_ensemble_classifier(test_dir, batch_size=10, results_dir="evaluatio
                     
                     # Get prediction from ensemble model
                     try:
-                        weighted_scores, predicted_class = ensemble.predict(img_path,method="voting")
+                        weighted_scores, predicted_class = ensemble.predict(img_path,method="weighted_voting")
                         
                         if not weighted_scores:
                             print(f"Warning: Failed to get prediction for {img_path}")

@@ -3,7 +3,7 @@ import tensorflow as tf
 import cv2
 
 # Load your trained ResNet50 model (adjust path if needed)
-MODEL_PATH = 'resnet50_best_model.h5'
+MODEL_PATH = 'resnet50/resnet50_best_model.h5'
 
 # List of your classes
 CLASSES = ['Atelectasis', 'Cardiomegaly', 'Effusion', 'Nodule', 'Pneumothorax']

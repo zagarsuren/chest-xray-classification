@@ -10,7 +10,7 @@ from densenet121.densenet import load_model as load_densenet, predictor as predi
 from swin.swin import predictor as predictor_swin
 from yolo11s.YOLO11s import load_yolo_model_once, predictor as predictor_yolo
 from inceptionv3.inceptionNet import load_bestmodel as load_inception, predictor as predictor_inception
- 
+from resnet50.resnet50_predictor import predictor as predictor_resnet50, load_model as load_resnet50
 
 class EnsembleModelClassifier:
     """
@@ -79,6 +79,12 @@ class EnsembleModelClassifier:
             yolo_model, yolo_class_names = load_yolo_model_once()
             self.initialized_models['YOLOv11s'] = (yolo_model, yolo_class_names)
             
+            # Load ResNet50 model
+            print("  Loading ResNet50 model...")
+            resnet50_model = load_resnet50()
+            self.initialized_models['ResNet50'] = resnet50_model
+
+
             print("All models loaded successfully!")
         except Exception as e:
             print(f"Error during model initialization: {e}")
@@ -146,6 +152,13 @@ class EnsembleModelClassifier:
         except Exception as e:
             print(f"Error during prediction with Swin Transformer: {e}")
         
+        # ResNet50 prediction
+        try:
+            print("  Predicting with ResNet50...")
+            model_predictions['ResNet50'] = predictor_resnet50(image, self.initialized_models['ResNet50'])
+        except Exception as e:
+            print(f"Error during prediction with ResNet50: {e}")
+            
         print("Finished individual predictions.")
     
         if method == "weighted_voting":

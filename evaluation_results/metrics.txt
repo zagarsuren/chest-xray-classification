@@ -1,0 +1,38 @@
+===== CURRENT METRICS =====
+
+Per-Class Metrics:
+-----------------
+
+Atelectasis:
+  Precision: 0.6818
+  Recall: 0.6818
+  F1-Score: 0.6818
+
+Cardiomegaly:
+  Precision: 0.7583
+  Recall: 0.8273
+  F1-Score: 0.7913
+
+Effusion:
+  Precision: 0.8039
+  Recall: 0.7455
+  F1-Score: 0.7736
+
+Nodule:
+  Precision: 0.7030
+  Recall: 0.6455
+  F1-Score: 0.6730
+
+Pneumothorax:
+  Precision: 0.7692
+  Recall: 0.8182
+  F1-Score: 0.7930
+
+Average Metrics:
+---------------
+  Accuracy: 0.7436
+
+  Macro Average:
+    Precision: 0.7433
+    Recall: 0.7436
+    F1-Score: 0.7425
